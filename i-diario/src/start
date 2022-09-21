@@ -1,0 +1,50 @@
+#!/bin/bash
+
+/tmp/entrypoint-2.sh
+
+if [ "$IDIARIO_DISABLE" = "true" ]; then sleep infinity; else echo "Iniciando I-DIARIO"; fi
+
+export RAILS_ENV=$IDIARIO_ENVIRONMENT
+
+if [ "$IDIARIO_ENVIRONMENT" != "production" ]; then
+ BUNDLE_PRD_INSTALL=''
+else
+ BUNDLE_PRD_INSTALL='--deployment --without development test'
+ export RAILS_SERVE_STATIC_FILES=true
+ sed -i 's/config.serve_static_files.*/config.serve_static_files = true/' config/environments/production.rb
+ sed -i 's/config.assets.compile.*/config.assets.compile = true/' config/environments/production.rb
+fi
+#bundle check || BUNDLE_JOBS=4 bundle install $BUNDLE_PRD_INSTALL
+bundle
+bundle install $BUNDLE_PRD_INSTALL
+
+yarn install
+
+if ! test -f ".setup"; then
+  echo -e "
+  $IDIARIO_ENVIRONMENT:
+    secret_key_base: $IDIARIO_SECRET_KEY
+    redis_url: redis://localhost:$REDIS_PORT
+    sidekiq_password: $SIDEKIQ_PASS
+    EXAM_POSTING_QUEUES: 'exam_posting_1,exam_posting_2'
+    " > config/secrets.yml
+
+  cp config/database.sample.yml config/database.yml
+
+  bundle exec rake db:create
+  bundle exec rake db:migrate
+  bundle exec rake assets:precompile
+  bundle exec rake entity:setup NAME=$IDIARIO_NAME DOMAIN=$IDIARIO_DOMAIN DATABASE=$IDIARIO_DATABASE
+  bundle exec rake entity:admin:create NAME=$IDIARIO_NAME ADMIN_PASSWORD=$IDIARIO_PASS
+
+  cp public/404.html.sample public/404.html
+  cp public/500.html.sample public/500.html
+
+  touch .setup
+fi
+
+rm -f /app/tmp/pids/server.pid
+
+echo "Starting.."
+bundle exec sidekiq &
+bundle exec rails server -b 0.0.0.0

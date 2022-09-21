@@ -1,0 +1,15 @@
+---
+:concurrency: 5
+staging:
+  :concurrency: 10
+production:
+  :concurrency: 50
+:queues:
+  - [default, 1]
+  - [low, 1]
+  - [critical, 1]
+  - [exam_posting, 1]
+  - [exam_posting_1, 1]
+  - [exam_posting_2, 1]
+  - [synchronizer, 1]
+  - [synchronizer_enqueue_next_job, 1]

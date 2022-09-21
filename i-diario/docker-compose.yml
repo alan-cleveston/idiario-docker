@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  i-diario-all:
+    build:
+      context: ./
+      args:
+        IDIARIO_VERSION: ${IDIARIO_VERSION_ENV}
+    image: i-diario-all
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_ENV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ENV}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE_ENV}
+      #IDIARIO_DISABLE: ${IDIARIO_DISABLE_ENV}
+      IDIARIO_ENVIRONMENT: ${IDIARIO_ENVIRONMENT_ENV}
+      IDIARIO_SECRET_KEY: ${IDIARIO_SECRET_KEY_ENV}
+      IDIARIO_DOMAIN: ${IDIARIO_DOMAIN_ENV}
+      IDIARIO_NAME: ${IDIARIO_NAME_ENV}
+      IDIARIO_PASS: ${IDIARIO_PASS_ENV}
+      IDIARIO_DATABASE: ${POSTGRES_DATABASE_ENV}
+      SIDEKIQ_PASS: ${SIDEKIQ_PASS_ENV}
+    volumes:
+      - ./data/pg_data:/var/lib/postgresql/12/main
+      - ./data/box:/box
+    ports:
+      - 3000:3000
