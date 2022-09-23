@@ -34,7 +34,7 @@ if ! test -f ".setup"; then
   bundle exec rake db:create
   bundle exec rake db:migrate
   bundle exec rake assets:precompile
-  bundle exec rake entity:setup NAME=$IDIARIO_NAME DOMAIN=$IDIARIO_DOMAIN DATABASE=$IDIARIO_DATABASE
+  bundle exec rake entity:setup NAME=$IDIARIO_NAME DOMAIN=$IDIARIO_DOMAIN DATABASE=$IDIARIO_DB_NAME
   bundle exec rake entity:admin:create NAME=$IDIARIO_NAME ADMIN_PASSWORD=$IDIARIO_PASS
 
   cp public/404.html.sample public/404.html

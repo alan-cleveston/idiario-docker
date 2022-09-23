@@ -1,6 +1,13 @@
 version: "3"
 
 services:
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ./data/pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_ENV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_ENV}
   i-diario-all:
     build:
       context: ./
@@ -8,19 +15,20 @@ services:
         IDIARIO_VERSION: ${IDIARIO_VERSION_ENV}
     image: i-diario-all
     environment:
-      POSTGRES_USER: ${POSTGRES_USER_ENV}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ENV}
-      POSTGRES_DATABASE: ${POSTGRES_DATABASE_ENV}
-      #IDIARIO_DISABLE: ${IDIARIO_DISABLE_ENV}
-      IDIARIO_ENVIRONMENT: ${IDIARIO_ENVIRONMENT_ENV}
-      IDIARIO_SECRET_KEY: ${IDIARIO_SECRET_KEY_ENV}
-      IDIARIO_DOMAIN: ${IDIARIO_DOMAIN_ENV}
-      IDIARIO_NAME: ${IDIARIO_NAME_ENV}
-      IDIARIO_PASS: ${IDIARIO_PASS_ENV}
-      IDIARIO_DATABASE: ${POSTGRES_DATABASE_ENV}
-      SIDEKIQ_PASS: ${SIDEKIQ_PASS_ENV}
+      #- IDIARIO_DISABLE=${IDIARIO_DISABLE_ENV}
+      - IDIARIO_ENVIRONMENT=${IDIARIO_ENVIRONMENT_ENV}
+      - IDIARIO_SECRET_KEY=${IDIARIO_SECRET_KEY_ENV}
+      - IDIARIO_DOMAIN=${IDIARIO_DOMAIN_ENV}
+      - IDIARIO_NAME=${IDIARIO_NAME_ENV}
+      - IDIARIO_PASS=${IDIARIO_PASS_ENV}
+      - IDIARIO_DB_HOST=postgres
+      - IDIARIO_DB_NAME=${POSTGRES_DATABASE_ENV}
+      - IDIARIO_DB_USER=${POSTGRES_USER_ENV}
+      - IDIARIO_DB_PASS=${POSTGRES_PASSWORD_ENV}
+      - SIDEKIQ_PASS=${SIDEKIQ_PASS_ENV}
     volumes:
-      - ./data/pg_data:/var/lib/postgresql/12/main
       - ./data/box:/box
     ports:
       - 3000:3000
+    depends_on:
+      - postgres

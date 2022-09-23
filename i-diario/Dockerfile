@@ -1,18 +1,10 @@
 FROM ruby:2.4.10-slim-buster
 
-# Instalando postgres
-RUN apt update && apt -y full-upgrade &&\
-    apt -y install gnupg2 wget &&\
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&\
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ `grep VERSION_CODENAME /etc/os-release | sed 's/VERSION_CODENAME=//'`-pgdg main" |tee  /etc/apt/sources.list.d/pgdg.list &&\
-    apt update &&\
-    apt -y install postgresql-12 postgresql-client-12
-ENV PGDATA=/var/lib/postgresql/12/main
-
 # Instalando Redis
 ENV REDIS_PASS=default \
     REDIS_PORT=6379
-RUN apt -y install redis-server
+RUN apt update && apt -y full-upgrade &&\
+    apt -y install redis-server
 
 # Instalando Mencached
 RUN apt -y install memcached libmemcached-tools
@@ -20,7 +12,7 @@ RUN apt -y install memcached libmemcached-tools
 # Limpeza
 RUN apt-get clean autoclean &&\
     apt-get autoremove --yes &&\
-    rm -rf /var/lib/{apt,dpkg,cache,log}/ /var/lib/postgresql/*
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 #Instalando i-diario
 RUN apt-get install -y git
