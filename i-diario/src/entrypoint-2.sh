@@ -9,6 +9,7 @@ PG_CMD_START="/usr/lib/postgresql/12/bin/pg_ctl start -D $PGDATA -l $PGDATA/post
 
 if [ -e $PGDATA/PG_VERSION ]; then
  echo "$PGDATA inicializado!!!"
+ chown -R postgres:postgres /var/lib/postgresql
  su - postgres -c "$PG_CMD_START"
 else
  if [ -z "$POSTGRES_PASSWORD" ]; then

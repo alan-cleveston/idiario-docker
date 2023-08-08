@@ -24,7 +24,7 @@ RUN apt-get clean autoclean &&\
 
 #Instalando i-diario
 RUN apt-get install -y git
-RUN apt-get install -y build-essential libpq-dev nodejs npm git &&\
+RUN apt-get install -y build-essential libpq-dev nodejs npm git shared-mime-info locales-all &&\
     npm i -g yarn
 
 ENV app /app
@@ -32,14 +32,20 @@ RUN mkdir $app
 WORKDIR $app
 ENV BUNDLE_PATH /box
 
-ARG IDIARIO_VERSION=1.4.1
-ENV IDIARIO_ENVIRONMENT=development
-RUN git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
+ARG IDIARIO_VERSION
+ENV IDIARIO_ENVIRONMENT=development \
+    HONEYBADGER_API_KEY=abcdefzyx
+RUN echo "Clonando I-DIARIO versão $IDIARIO_VERSION" &&\
+    git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
 
 COPY src/start script/start
 COPY src/entrypoint-2.sh /tmp/entrypoint-2.sh
 COPY src/sidekiq.yml config/
 COPY src/sidekiq.rb config/initializers/
 RUN chmod +x /tmp/entrypoint-2.sh script/start
+
+ENV LANG=en_US.UTF8 \
+    LANGUAGE=en_US.UTF8 \
+    LC_ALL=en_US.UTF8
 
 ENTRYPOINT ["script/start"]
