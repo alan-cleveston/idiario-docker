@@ -33,8 +33,7 @@ WORKDIR $app
 ENV BUNDLE_PATH /box
 
 ARG IDIARIO_VERSION
-ENV IDIARIO_ENVIRONMENT=development \
-    HONEYBADGER_API_KEY=abcdefzyx
+ENV IDIARIO_ENVIRONMENT=development
 RUN echo "Clonando I-DIARIO versão $IDIARIO_VERSION" &&\
     git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
 
