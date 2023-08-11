@@ -19,7 +19,7 @@ services:
       - IDIARIO_PASS=${IDIARIO_PASS_ENV}
       - IDIARIO_DATABASE=${POSTGRES_DATABASE_ENV}
       - SIDEKIQ_PASS=${SIDEKIQ_PASS_ENV}
-      - SMTP_DOMAIN=${IDIARIO_SMTP_DOMAIN}
+      #- SMTP_DOMAIN=${IDIARIO_SMTP_DOMAIN}
     volumes:
       - ${VOL_PG_DATA}:/var/lib/postgresql/12/main
       - ${VOL_BOX}:/box
@@ -30,7 +30,7 @@ services:
       context: ./smtp-relay
     image: smtp-relay
     environment:
-      - SMTP_HOST=${IDIARIO_SMTP_HOST}
+      - SMTP_HOST=${IDIARIO_SMTP_ADDRESS}
       - SMTP_PORT=${IDIARIO_SMTP_PORT}
-      - SMTP_LOGIN=${IDIARIO_SMTP_LOGIN}
+      - SMTP_LOGIN=${IDIARIO_SMTP_USER_NAME}
       - SMTP_PASSWORD=${IDIARIO_SMTP_PASSWORD}
