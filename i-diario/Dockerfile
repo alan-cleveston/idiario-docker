@@ -17,6 +17,10 @@ RUN apt -y install redis-server
 # Instalando Mencached
 RUN apt -y install memcached libmemcached-tools
 
+# Instalando postfix(smtp)
+RUN export DEBIAN_FRONTEND=noninteractive &&\
+    apt-get install postfix mailutils libsasl2-2 ca-certificates libsasl2-modules -y
+
 # Limpeza
 RUN apt-get clean autoclean &&\
     apt-get autoremove --yes &&\
