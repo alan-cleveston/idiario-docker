@@ -1,6 +1,10 @@
 version: "3"
 
 services:
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ${VOL_PG_DATA}:/var/lib/postgresql/12/main
   i-diario-all:
     build:
       context: ./
@@ -8,6 +12,7 @@ services:
         IDIARIO_VERSION: ${IDIARIO_VERSION_ENV}
     image: i-diario-all
     environment:
+      - POSTGRES_START=${POSTGRES_START}
       - POSTGRES_USER=${POSTGRES_USER_ENV}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_ENV}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE_ENV}
@@ -20,6 +25,10 @@ services:
       - IDIARIO_DATABASE=${POSTGRES_DATABASE_ENV}
       - SIDEKIQ_PASS=${SIDEKIQ_PASS_ENV}
       #- SMTP_DOMAIN=${IDIARIO_SMTP_DOMAIN}
+      - SMTP_HOST=${IDIARIO_SMTP_ADDRESS}
+      - SMTP_PORT=${IDIARIO_SMTP_PORT}
+      - SMTP_LOGIN=${IDIARIO_SMTP_USER_NAME}
+      - SMTP_PASSWORD=${IDIARIO_SMTP_PASSWORD}
     volumes:
       - ${VOL_PG_DATA}:/var/lib/postgresql/12/main
       - ${VOL_BOX}:/box

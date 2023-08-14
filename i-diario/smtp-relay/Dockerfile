@@ -1,3 +1,4 @@
+# https://github.com/shamil/docker-postfix-relay
 FROM alpine:3.17
 
 EXPOSE 25
