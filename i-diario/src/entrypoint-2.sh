@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #POSTGRES
-export DATABASE_HOST=${POSTGRES_HOST:-localhost}
 POSTGRES_START=${POSTGRES_START:-true}
 #POSTGRES_USER=${POSTGRES_USER:-postgres}
 POSTGRES_USER="postgres"
@@ -9,6 +8,7 @@ POSTGRES_DATABASE=${POSTGRES_DATABASE:-idiario}
 
 if [ "$POSTGRES_START" = true ]; then
  
+ export DATABASE_HOST=${POSTGRES_HOST:-localhost}
  echo "PostgreSQL Internal START=TRUE!!!"
 
  PG_CMD_START="/usr/lib/postgresql/12/bin/pg_ctl start -D $PGDATA -l $PGDATA/postgresql.log"
@@ -31,6 +31,7 @@ if [ "$POSTGRES_START" = true ]; then
  fi
  tail -F $PGDATA/postgresql.log &
 else
+ export DATABASE_HOST=${POSTGRES_HOST:-postgres}
  echo "PostgreSQL Internal START=FALSE!!!"
  echo "Using External PostgreSQL -> $POSTGRES_HOST"
 fi
