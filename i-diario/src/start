@@ -27,7 +27,7 @@ if ! test -f ".setup"; then
     redis_url: redis://localhost:$REDIS_PORT
     sidekiq_password: $SIDEKIQ_PASS
     EXAM_POSTING_QUEUES: 'exam_posting_1,exam_posting_2'
-    SMTP_ADDRESS: smtp-relay
+    SMTP_ADDRESS: localhost
     SMTP_PORT: 25
     SMTP_DOMAIN: ${SMTP_DOMAIN:-localdomain}
     SMTP_USER_NAME:

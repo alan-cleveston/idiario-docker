@@ -18,8 +18,10 @@ RUN apt -y install redis-server
 RUN apt -y install memcached libmemcached-tools
 
 # Instalando smtp-relay
-#RUN export DEBIAN_FRONTEND=noninteractive &&\
-#    apt-get install postfix mailutils libsasl2-2 ca-certificates libsasl2-modules -y
+RUN echo "postfix postfix/mailname string localdomain" | debconf-set-selections &&\
+    echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections &&\
+    apt-get install postfix mailutils libsasl2-2 ca-certificates libsasl2-modules -y &&\
+    sed -i 's/    y    /    n    /g' /etc/postfix/master.cf
 
 # Limpeza
 RUN apt-get clean autoclean &&\

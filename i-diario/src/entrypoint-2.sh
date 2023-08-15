@@ -63,11 +63,7 @@ sed -i "s;.*config.secret_key.*;config.secret_key = '$IDIARIO_SECRET_KEY';" conf
 
 ######### SMTP ##########
 
-if [ -n "$RECIPIENT_RESTRICTIONS" ]; then
-        RECIPIENT_RESTRICTIONS="inline:{$(echo $RECIPIENT_RESTRICTIONS | sed 's/\s\+/=OK, /g')=OK}"
-else
-        RECIPIENT_RESTRICTIONS=static:OK
-fi
+RECIPIENT_RESTRICTIONS=static:OK
 
 export SMTP_LOGIN SMTP_PASSWORD RECIPIENT_RESTRICTIONS
 export SMTP_HOST=${SMTP_HOST:-"email-smtp"}
@@ -76,20 +72,21 @@ export USE_TLS=${USE_TLS:-"yes"}
 export TLS_VERIFY=${TLS_VERIFY:-"may"}
 
 # Render template and write postfix main config
-cat <<- EOF > /etc/postfix/main.cf.tpl
+cat <<- EOF > /etc/postfix/main.cf
 #
 # Just the bare minimal
 #
 
 # write logs to stdout
-maillog_file = /var/log/mail.log
+#maillog_file = /var/log/mail.log
+maillog_file = /dev/stdout
 
 # network bindings
 inet_interfaces = all
 inet_protocols = ipv4
 
 # general params
-compatibility_level = 3.6
+compatibility_level = 2
 myhostname = $HOSTNAME
 mynetworks = 127.0.0.0/8 [::1]/128
 relayhost = [$SMTP_HOST]:$SMTP_PORT
@@ -121,4 +118,4 @@ newaliases
 # Launch
 echo "INICIANDO SMTP -> [$SMTP_HOST]:$SMTP_PORT"
 rm -f /var/spool/postfix/pid/*.pid
-#postfix -c /etc/postfix start
+postfix -c /etc/postfix start
