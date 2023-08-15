@@ -1,15 +1,15 @@
 #!/bin/bash
 
 #POSTGRES
-POSTGRES_START=${POSTGRES_START:-true}
+IDIARIO_POSTGRES_START=${IDIARIO_POSTGRES_START:-true}
 #POSTGRES_USER=${POSTGRES_USER:-postgres}
 POSTGRES_USER="postgres"
 POSTGRES_DATABASE=${POSTGRES_DATABASE:-idiario}
 
-if [ "$POSTGRES_START" = true ]; then
- 
- export DATABASE_HOST=${POSTGRES_HOST:-localhost}
- echo "PostgreSQL Internal START=TRUE!!!"
+if [ "$IDIARIO_POSTGRES_START" = true ]; then
+
+ export POSTGRES_HOST=localhost
+ echo "PostgreSQL Internal START=TRUE!!! -> ($POSTGRES_HOST)"
 
  PG_CMD_START="/usr/lib/postgresql/12/bin/pg_ctl start -D $PGDATA -l $PGDATA/postgresql.log"
 
@@ -31,9 +31,11 @@ if [ "$POSTGRES_START" = true ]; then
  fi
  tail -F $PGDATA/postgresql.log &
 else
- export DATABASE_HOST=${POSTGRES_HOST:-postgres}
+ export POSTGRES_HOST=${POSTGRES_HOST:-postgres}
  echo "PostgreSQL Internal START=FALSE!!!"
  echo "Using External PostgreSQL -> $POSTGRES_HOST"
+ echo "Waiting PostgreSQL UP..."
+ sleep 10
 fi
 
 #REDIS
@@ -51,6 +53,7 @@ memcached -l 127.0.0.1 -d -u root
 sed -i "s;username:.*;username: $POSTGRES_USER;" config/database.sample.yml
 sed -i "s;password:.*;password: $POSTGRES_PASSWORD;" config/database.sample.yml
 sed -i "s;database:.*;database: $POSTGRES_DATABASE;" config/database.sample.yml
+sed -i "s;host:.*;host: $POSTGRES_HOST;" config/database.sample.yml
 echo -e "
 production:
   <<: *default
@@ -78,8 +81,8 @@ cat <<- EOF > /etc/postfix/main.cf
 #
 
 # write logs to stdout
-#maillog_file = /var/log/mail.log
-maillog_file = /dev/stdout
+maillog_file = /var/log/mail.log
+#maillog_file = /dev/stdout
 
 # network bindings
 inet_interfaces = all
@@ -119,3 +122,4 @@ newaliases
 echo "INICIANDO SMTP -> [$SMTP_HOST]:$SMTP_PORT"
 rm -f /var/spool/postfix/pid/*.pid
 postfix -c /etc/postfix start
+tail -F /var/log/mail.log &
