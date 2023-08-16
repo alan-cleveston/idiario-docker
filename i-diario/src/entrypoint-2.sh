@@ -31,7 +31,7 @@ if [ "$IDIARIO_POSTGRES_START" = true ]; then
  fi
  tail -F $PGDATA/postgresql.log &
 else
- export POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+ export POSTGRES_HOST=${IDIARIO_DB_HOST}
  echo "PostgreSQL Internal START=FALSE!!!"
  echo "Using External PostgreSQL -> $POSTGRES_HOST"
  echo "Waiting PostgreSQL UP..."

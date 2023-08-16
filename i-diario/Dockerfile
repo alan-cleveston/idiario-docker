@@ -29,6 +29,7 @@ RUN apt-get clean autoclean &&\
     rm -rf /var/lib/{apt,dpkg,cache,log}/ /var/lib/postgresql/*
 
 #Instalando i-diario
+RUN apt update
 RUN apt-get install -y git
 RUN apt-get install -y build-essential libpq-dev nodejs npm git shared-mime-info locales-all &&\
     npm i -g yarn
@@ -38,7 +39,7 @@ RUN mkdir $app
 WORKDIR $app
 ENV BUNDLE_PATH /box
 
-ARG IDIARIO_VERSION
+ARG IDIARIO_VERSION=1.5
 ENV IDIARIO_ENVIRONMENT=development
 RUN echo "Clonando I-DIARIO versão $IDIARIO_VERSION" &&\
     git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
