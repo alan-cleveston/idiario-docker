@@ -10,7 +10,7 @@ services:
       - POSTGRES_DATABASE=${POSTGRES_DATABASE_ENV}
     command: sh -c "[ \"$$IDIARIO_POSTGRES_START\" = true ] && echo 'PostgreSQL service is disabled!!' || docker-entrypoint.sh postgres"
     volumes:
-      - ${VOL_PG_DATA}:/var/lib/postgresql/12/main
+      - ${VOL_PG_DATA}:/var/lib/postgresql/data
   i-diario-all:
     build:
       context: ./
@@ -37,7 +37,7 @@ services:
       - SMTP_LOGIN=${IDIARIO_SMTP_USER_NAME}
       - SMTP_PASSWORD=${IDIARIO_SMTP_PASSWORD}
     volumes:
-      - ${VOL_PG_DATA}:/var/lib/postgresql/12/main
+      - ${VOL_PG_DATA}:/var/lib/postgresql/data
       - ${VOL_BOX}:/box
     ports:
       - 3000:3000
