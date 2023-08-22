@@ -16,6 +16,7 @@ else
 fi
 #bundle check || BUNDLE_JOBS=4 bundle install $BUNDLE_PRD_INSTALL
 bundle
+bundle update rake
 bundle install $BUNDLE_PRD_INSTALL
 
 yarn install

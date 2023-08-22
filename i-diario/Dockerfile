@@ -29,7 +29,6 @@ RUN apt-get clean autoclean &&\
     rm -rf /var/lib/{apt,dpkg,cache,log}/ /var/lib/postgresql/*
 
 #Instalando i-diario
-RUN apt-get install -y git
 RUN apt-get install -y build-essential libpq-dev nodejs npm git shared-mime-info locales-all &&\
     npm i -g yarn
 
@@ -42,6 +41,9 @@ ARG IDIARIO_VERSION
 ENV IDIARIO_ENVIRONMENT=development
 RUN echo "Clonando I-DIARIO versão $IDIARIO_VERSION" &&\
     git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
+RUN sed -i "s;gem 'prawn'.*;gem 'prawn', '2.1.2', git: 'https://github.com/portabilis/prawn.git', branch: 'master', tag: 'v2.1.2';" Gemfile &&\
+    sed -i "/webpacker/a gem 'tilt', '~> 1.4.1'" Gemfile &&\
+    sed -i "/webpacker/a gem 'loofah', '~>2.19.1'" Gemfile
 
 COPY src/start script/start
 COPY src/entrypoint-2.sh /tmp/entrypoint-2.sh
