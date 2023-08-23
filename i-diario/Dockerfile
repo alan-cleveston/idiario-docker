@@ -29,6 +29,8 @@ RUN apt-get clean autoclean &&\
     rm -rf /var/lib/{apt,dpkg,cache,log}/ /var/lib/postgresql/*
 
 #Instalando i-diario
+RUN apt-get update
+RUN apt-get install -y neovim
 RUN apt-get install -y build-essential libpq-dev nodejs npm git shared-mime-info locales-all &&\
     npm i -g yarn
 
@@ -37,7 +39,7 @@ RUN mkdir $app
 WORKDIR $app
 ENV BUNDLE_PATH /box
 
-ARG IDIARIO_VERSION
+ARG IDIARIO_VERSION=1.4.1
 ENV IDIARIO_ENVIRONMENT=development
 RUN echo "Clonando I-DIARIO versão $IDIARIO_VERSION" &&\
     git clone --branch $IDIARIO_VERSION https://github.com/portabilis/i-diario/ $app/
@@ -49,7 +51,14 @@ COPY src/start script/start
 COPY src/entrypoint-2.sh /tmp/entrypoint-2.sh
 COPY src/sidekiq.yml config/
 COPY src/sidekiq.rb config/initializers/
-RUN chmod +x /tmp/entrypoint-2.sh script/start
+COPY src/updateReport.sh updateReport.sh
+RUN chmod +x /tmp/entrypoint-2.sh script/start updateReport.sh
+
+# Adicionar entrada cron para executar o script às 07:00 da manhã
+RUN echo "0 7 * * * /app/updateReport.sh" | crontab -
+
+# Adicionar entrada cron para executar o script às 13:00 da tarde
+RUN echo "0 13 * * * /app/updateReport.sh" | crontab -
 
 ENV LANG=en_US.UTF8 \
     LANGUAGE=en_US.UTF8 \

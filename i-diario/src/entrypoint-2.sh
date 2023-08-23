@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #POSTGRES
-IDIARIO_POSTGRES_START=${IDIARIO_POSTGRES_START:-true}
+IDIARIO_POSTGRES_START=${IDIARIO_POSTGRES_START}
 #POSTGRES_USER=${POSTGRES_USER:-postgres}
-POSTGRES_USER="postgres"
-POSTGRES_DATABASE=${POSTGRES_DATABASE:-idiario}
+POSTGRES_USER=${POSTGRES_USER}
+POSTGRES_DATABASE=${POSTGRES_DATABASE}
 
 if [ "$IDIARIO_POSTGRES_START" = true ]; then
 
@@ -31,7 +31,7 @@ if [ "$IDIARIO_POSTGRES_START" = true ]; then
  fi
  tail -F $PGDATA/postgresql.log &
 else
- export POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+ export POSTGRES_HOST=${POSTGRES_HOST}
  echo "PostgreSQL Internal START=FALSE!!!"
  echo "Using External PostgreSQL -> $POSTGRES_HOST"
  echo "Waiting PostgreSQL UP..."
